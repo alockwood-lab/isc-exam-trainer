@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISC CPA Exam Trainer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f0e;color:#e8e6dc;min-height:100vh;display:flex}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#3a3a38;border-radius:3px}
+
+.side{width:260px;background:#141413;border-right:1px solid #2a2a28;height:100vh;position:fixed;overflow-y:auto;z-index:50;display:flex;flex-direction:column}
+.side-hd{padding:16px;border-bottom:1px solid #2a2a28}
+.side-hd h1{font-size:14px;font-weight:700}.side-hd h1 span{color:#e66767}
+.side-hd p{font-size:11px;color:#8a8980;margin-top:4px}
+.side-section{padding:8px 0;border-bottom:1px solid #2a2a28}
+.side-section:last-child{border:none}
+.unit-hd{padding:6px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#8a8980;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.unit-hd:hover{color:#e8e6dc}
+.unit-hd .ct{font-size:10px;background:#2a2a28;padding:1px 6px;border-radius:4px;color:#8a8980}
+.mod-list{padding:0 8px}
+.mod-btn{width:100%;text-align:left;padding:7px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:transparent;color:#8a8980;transition:all .15s;display:flex;justify-content:space-between;align-items:center;gap:4px}
+.mod-btn:hover{color:#e8e6dc;background:#1f1f1e}
+.mod-btn.active{color:#e8e6dc;background:#2a2a28}
+.mod-btn .mct{font-size:10px;opacity:.6}
+.side-foot{padding:12px 16px;border-top:1px solid #2a2a28;margin-top:auto}
+.side-foot button{width:100%;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #3a3a38;background:#1a1a19;color:#8a8980;transition:all .15s;margin-bottom:6px}
+.side-foot button:hover{color:#e8e6dc;border-color:#5a5a58}
+.side-foot button.sel{border-color:#e66767;color:#e66767}
+.prirow{display:flex;gap:4px;margin-bottom:6px}
+.pribtn{flex:1;padding:5px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid #3a3a38;background:transparent;text-align:center;transition:all .15s}
+.pribtn:hover{opacity:.9}
+.pribtn.pr{border-color:rgba(230,80,80,.4);color:#e64040}.pribtn.pr.sel{background:rgba(230,80,80,.15)}
+.pribtn.po{border-color:rgba(230,160,40,.4);color:#e6a028}.pribtn.po.sel{background:rgba(230,160,40,.15)}
+.pribtn.pw{border-color:rgba(130,130,120,.4);color:#82827a}.pribtn.pw.sel{background:rgba(130,130,120,.15)}
+
+.wrap{margin-left:260px;flex:1;min-height:100vh}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:1px solid #2a2a28;background:#141413;position:sticky;top:0;z-index:40;flex-wrap:wrap;gap:8px}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#8a8980;transition:all .2s}
+.nav-tab:hover{color:#e8e6dc;background:#1a1a19}.nav-tab.active{color:#e8e6dc;background:#2a2a28}
+.nav-stats{display:flex;gap:8px;align-items:center}
+.stat-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px}
+.sg{background:rgba(25,158,112,.15);color:#199e70}.sy{background:rgba(201,133,0,.15);color:#c98500}.sr{background:rgba(230,103,103,.15);color:#e66767}
+.pct{font-size:11px;color:#8a8980;margin-left:4px}
+.main{max-width:860px;margin:0 auto;padding:24px 20px 80px}
+.view{display:none}.view.active{display:block}
+
+.controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.counter{font-size:13px;color:#8a8980}.counter strong{color:#e8e6dc}
+.pribar{display:flex;gap:4px;align-items:center}
+.pribar .dot{width:8px;height:8px;border-radius:50%;cursor:pointer;border:1px solid transparent;opacity:.5;transition:all .15s}
+.pribar .dot:hover{opacity:1;transform:scale(1.3)}.pribar .dot.r{background:#e64040}.pribar .dot.o{background:#e6a028}.pribar .dot.w{background:#82827a}
+.pribar .dot.act{opacity:1;border-color:#fff;transform:scale(1.2)}
+.flashcard{perspective:1200px;min-height:340px;cursor:pointer;margin-bottom:16px}
+.flashcard-inner{position:relative;width:100%;min-height:340px;transition:transform .45s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.face{position:absolute;width:100%;min-height:340px;backface-visibility:hidden;border-radius:14px;padding:36px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.front{background:linear-gradient(135deg,#1a1a19,#1f1f1e);border:1px solid #3a3a38}
+.back{background:linear-gradient(135deg,rgba(230,103,103,.04),rgba(201,133,0,.04));border:1px solid rgba(230,103,103,.15);transform:rotateY(180deg)}
+.tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#e66767;margin-bottom:12px}
+.tag .pri-ind{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.bp-tag{font-size:9px;font-weight:600;color:#5a8abf;margin-bottom:10px;letter-spacing:.3px}
+.question{font-size:19px;font-weight:700;line-height:1.4}
+.answer{font-size:13px;line-height:1.7;color:#c3c2b7;white-space:pre-wrap}
+.hint{font-size:11px;color:#4a4a48;margin-top:auto;padding-top:14px;text-align:center}
+.actions{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+.rbtn{padding:9px 20px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #3a3a38;background:#1a1a19;color:#8a8980;transition:all .15s;flex:1;max-width:160px}
+.rbtn:hover{border-color:#5a5a58;color:#e8e6dc}
+.rbtn.g:hover{border-color:#199e70;color:#199e70;background:rgba(25,158,112,.06)}
+.rbtn.f:hover{border-color:#c98500;color:#c98500;background:rgba(201,133,0,.06)}
+.rbtn.m:hover{border-color:#e66767;color:#e66767;background:rgba(230,103,103,.06)}
+.cnav{display:flex;gap:8px;justify-content:center}
+.nb{padding:9px 24px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #3a3a38;background:#1a1a19;color:#e8e6dc;transition:all .15s}
+.nb:hover{background:#2a2a28}.nb.p{background:#e66767;border-color:#e66767;color:#fff}.nb.p:hover{background:#c74545}
+
+.quiz-setup{text-align:center;padding:48px 0}.quiz-setup h2{font-size:24px;font-weight:700;margin-bottom:6px}.quiz-setup p{color:#8a8980;margin-bottom:24px;font-size:14px}
+.qopts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.qo{padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #3a3a38;background:#1a1a19;color:#e8e6dc;transition:all .15s;min-width:100px}
+.qo:hover{border-color:#e66767}.qo.sel{border-color:#e66767;background:rgba(230,103,103,.08);color:#e66767}
+.startb{padding:12px 40px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:#e66767;color:#fff;transition:all .15s;margin-top:6px}.startb:hover{background:#c74545}
+.qa{display:none}.qa.show{display:block}
+.qprog{height:4px;background:#2a2a28;border-radius:2px;margin-bottom:24px;overflow:hidden}
+.qbar{height:100%;background:#e66767;border-radius:2px;transition:width .3s}
+.qq{font-size:18px;font-weight:700;line-height:1.4;margin-bottom:18px}
+.qs{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#e66767;margin-bottom:8px}
+.qta{width:100%;min-height:100px;background:#1a1a19;border:1px solid #3a3a38;border-radius:10px;padding:14px;font-size:13px;color:#e8e6dc;font-family:inherit;resize:vertical;line-height:1.6;margin-bottom:12px}
+.qta:focus{outline:none;border-color:#e66767}.qta::placeholder{color:#5a5a58}
+.qr{display:none;margin-top:14px}.qr.show{display:block}
+.qab{background:linear-gradient(135deg,rgba(230,103,103,.04),rgba(201,133,0,.04));border:1px solid rgba(230,103,103,.15);border-radius:10px;padding:20px;margin-bottom:14px}
+.qab h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#199e70;margin-bottom:8px}
+.qab p{font-size:13px;line-height:1.7;color:#c3c2b7;white-space:pre-wrap}
+
+.wk{padding:16px 0}.wk h2{font-size:20px;font-weight:700;margin-bottom:4px}.wk>p{color:#8a8980;font-size:13px;margin-bottom:20px}
+.wl{display:flex;flex-direction:column;gap:8px}
+.wc{background:#1a1a19;border:1px solid #3a3a38;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .15s}
+.wc:hover{border-color:#e66767}.wcq{font-size:13px;font-weight:600;flex:1}
+.wct{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:4px;margin-left:10px;flex-shrink:0}
+.tm{background:rgba(230,103,103,.15);color:#e66767}.tf{background:rgba(201,133,0,.15);color:#c98500}
+.empty{text-align:center;padding:40px 0;color:#5a5a58;font-size:13px}
+.wbtns{text-align:center;margin-top:18px}
+.wbtns button{margin:0 4px}
+.kb{position:fixed;bottom:12px;right:20px;display:flex;gap:12px;background:#1a1a19;border:1px solid #3a3a38;border-radius:8px;padding:6px 14px;font-size:10px;color:#5a5a58;z-index:30}
+.kb kbd{background:#2a2a28;border:1px solid #3a3a38;border-radius:3px;padding:1px 5px;font-family:inherit;color:#8a8980;margin:0 1px}
+
+/* Blueprint Coverage View */
+.bp-section{margin-bottom:28px}
+.bp-area-hd{font-size:16px;font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline}
+.bp-area-hd .bpw{font-size:11px;font-weight:600;color:#5a8abf}
+.bp-area-sub{font-size:11px;color:#8a8980;margin-bottom:14px}
+.bp-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#1a1a19;border:1px solid #2a2a28;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .15s}
+.bp-row:hover{border-color:#5a8abf}
+.bp-row-left{display:flex;align-items:center;gap:10px;flex:1}
+.bp-code{font-size:10px;font-weight:700;color:#5a8abf;min-width:44px}
+.bp-name{font-size:13px;font-weight:600}
+.bp-bar{width:100px;height:6px;background:#2a2a28;border-radius:3px;overflow:hidden;margin:0 12px}
+.bp-fill{height:100%;border-radius:3px;transition:width .3s}
+.bp-count{font-size:11px;color:#8a8980;min-width:60px;text-align:right}
+.bp-legend{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.bp-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#8a8980}
+.bp-leg-dot{width:8px;height:8px;border-radius:50%}
+.bp-summary{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.bp-sum-card{background:#1a1a19;border:1px solid #2a2a28;border-radius:10px;padding:14px 18px;flex:1;min-width:140px;text-align:center}
+.bp-sum-num{font-size:24px;font-weight:700}.bp-sum-label{font-size:10px;color:#8a8980;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+
+.side-toggle{display:none;position:fixed;top:8px;left:8px;z-index:60;padding:6px 10px;border-radius:6px;border:1px solid #3a3a38;background:#1a1a19;color:#e8e6dc;font-size:16px;cursor:pointer}
+@media(max-width:768px){
+  .side{transform:translateX(-100%);transition:transform .2s}.side.open{transform:translateX(0)}
+  .side-toggle{display:block}.wrap{margin-left:0}
+  .kb{display:none}
+}
+</style>
+</head>
+<body>
+<button class="side-toggle" onclick="document.querySelector('.side').classList.toggle('open')">&#9776;</button>
+
+<aside class="side" id="sidebar">
+  <div class="side-hd">
+    <h1>ISC <span>Exam Trainer</span></h1>
+    <p id="totalCount">0 cards loaded</p>
+  </div>
+  <div class="side-section">
+    <div class="unit-hd" onclick="setFilter('all')">All Cards <span class="ct" id="allCt">0</span></div>
+  </div>
+  <div class="side-section" id="u1sec">
+    <div class="unit-hd" onclick="setFilter('u1')">Unit 1 &mdash; Frameworks <span class="ct" id="u1ct">0</span></div>
+    <div class="mod-list" id="u1mods"></div>
+  </div>
+  <div class="side-section" id="u2sec">
+    <div class="unit-hd" onclick="setFilter('u2')">Unit 2 &mdash; IT &amp; Data <span class="ct" id="u2ct">0</span></div>
+    <div class="mod-list" id="u2mods"></div>
+  </div>
+  <div class="side-section" id="u3sec">
+    <div class="unit-hd" onclick="setFilter('u3')">Unit 3 &mdash; Security <span class="ct" id="u3ct">0</span></div>
+    <div class="mod-list" id="u3mods"></div>
+  </div>
+  <div class="side-section" id="u4sec">
+    <div class="unit-hd" onclick="setFilter('u4')">Unit 4 &mdash; SOC <span class="ct" id="u4ct">0</span></div>
+    <div class="mod-list" id="u4mods"></div>
+  </div>
+  <div class="side-foot">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#5a5a58;margin-bottom:6px">Priority Filter</div>
+    <div class="prirow">
+      <button class="pribtn pr sel" onclick="togglePri('red',this)" title="Must Know">&#x1F534; Must</button>
+      <button class="pribtn po sel" onclick="togglePri('orange',this)" title="Seen on Exam">&#x1F7E0; Seen</button>
+      <button class="pribtn pw sel" onclick="togglePri('white',this)" title="Less Likely">&#x26AA; Less</button>
+    </div>
+    <button onclick="resetRatings()">Reset All Ratings</button>
+    <button onclick="exportProgress()">Export Progress</button>
+  </div>
+</aside>
+
+<div class="wrap">
+  <div class="nav">
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchView('fc',this)">Flashcards</button>
+      <button class="nav-tab" onclick="switchView('quiz',this)">Quiz</button>
+      <button class="nav-tab" onclick="switchView('weak',this)">Weak Spots</button>
+      <button class="nav-tab" onclick="switchView('bp',this)">Blueprint</button>
+    </div>
+    <div class="nav-stats">
+      <span class="stat-pill sg" id="sg">0</span>
+      <span class="stat-pill sy" id="sf">0</span>
+      <span class="stat-pill sr" id="sm">0</span>
+      <span class="pct" id="pctDone"></span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="view active" id="v-fc">
+      <div class="controls">
+        <div class="counter">Card <strong id="cn">1</strong> / <strong id="ct">0</strong></div>
+        <div class="pribar" id="pribar">
+          <span style="font-size:10px;color:#5a5a58;margin-right:4px">Priority:</span>
+          <div class="dot r" onclick="setPri('red')" title="Must Know"></div>
+          <div class="dot o" onclick="setPri('orange')" title="Seen on Exam"></div>
+          <div class="dot w" onclick="setPri('white')" title="Less Likely"></div>
+        </div>
+      </div>
+      <div class="flashcard" id="fc" onclick="flip()">
+        <div class="flashcard-inner">
+          <div class="face front">
+            <div class="tag" id="ftag"></div>
+            <div class="bp-tag" id="fbp"></div>
+            <div class="question" id="fq"></div>
+            <div class="hint">Click or press Space to flip</div>
+          </div>
+          <div class="face back">
+            <div class="tag" id="btag"></div>
+            <div class="bp-tag" id="bbp"></div>
+            <div class="answer" id="fa"></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="rbtn g" onclick="rate('got')">Got It</button>
+        <button class="rbtn f" onclick="rate('fuzzy')">Fuzzy</button>
+        <button class="rbtn m" onclick="rate('missed')">Missed It</button>
+      </div>
+      <div class="cnav">
+        <button class="nb" onclick="prev()">&larr; Prev</button>
+        <button class="nb" onclick="shuffle()">Shuffle</button>
+        <button class="nb p" onclick="next()">Next &rarr;</button>
+      </div>
+    </div>
+
+    <div class="view" id="v-quiz">
+      <div class="quiz-setup" id="qsetup">
+        <h2>Quiz Mode</h2>
+        <p>Type your answer, then compare. Track what you know vs don't.</p>
+        <div class="qopts" id="quizUnitOpts">
+          <button class="qo sel" onclick="sqt(this,'all')">All</button>
+          <button class="qo" onclick="sqt(this,'u1')">Unit 1</button>
+          <button class="qo" onclick="sqt(this,'u2')">Unit 2</button>
+          <button class="qo" onclick="sqt(this,'u3')">Unit 3</button>
+          <button class="qo" onclick="sqt(this,'u4')">Unit 4</button>
+          <button class="qo" onclick="sqt(this,'weak')">Weak Only</button>
+          <button class="qo" onclick="sqt(this,'red')">Must Know</button>
+        </div>
+        <div class="qopts">
+          <button class="qo sel" onclick="sqc(this,15)">15 Qs</button>
+          <button class="qo" onclick="sqc(this,30)">30 Qs</button>
+          <button class="qo" onclick="sqc(this,50)">50 Qs</button>
+          <button class="qo" onclick="sqc(this,0)">All</button>
+        </div>
+        <button class="startb" onclick="startQuiz()">Start Quiz</button>
+      </div>
+      <div class="qa" id="qactive">
+        <div class="qprog"><div class="qbar" id="qbar"></div></div>
+        <div class="qs" id="qsec"></div>
+        <div class="qq" id="qqt"></div>
+        <textarea class="qta" id="qin" placeholder="Type your answer..."></textarea>
+        <button class="nb p" id="qrb" onclick="revealQuiz()">Reveal Answer</button>
+        <div class="qr" id="qrev">
+          <div class="qab"><h4>Answer</h4><p id="qans"></p></div>
+          <div class="actions">
+            <button class="rbtn g" onclick="qRate('got')">Nailed It</button>
+            <button class="rbtn f" onclick="qRate('fuzzy')">Partial</button>
+            <button class="rbtn m" onclick="qRate('missed')">Missed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="v-weak">
+      <div class="wk">
+        <h2>Weak Spots</h2>
+        <p>Cards rated Fuzzy or Missed. Focus here.</p>
+        <div id="wlist" class="wl"><div class="empty">No weak spots yet. Start studying!</div></div>
+        <div class="wbtns">
+          <button class="nb" onclick="drillWeak()" id="dwb" style="display:none">Drill Weak Only</button>
+          <button class="nb" onclick="clearRatings()" id="cwb" style="display:none;color:#e66767">Clear Ratings</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="v-bp">
+      <div class="wk">
+        <h2>AICPA Blueprint Coverage</h2>
+        <p>How your flashcards map to the official ISC exam blueprint. Click any row to study those cards.</p>
+        <div class="bp-summary" id="bpSummary"></div>
+        <div class="bp-legend">
+          <div class="bp-leg-item"><div class="bp-leg-dot" style="background:#199e70"></div> Good coverage (5+)</div>
+          <div class="bp-leg-item"><div class="bp-leg-dot" style="background:#c98500"></div> Some coverage (2-4)</div>
+          <div class="bp-leg-item"><div class="bp-leg-dot" style="background:#e64040"></div> Low coverage (0-1)</div>
+        </div>
+        <div id="bpContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="kb" id="kbh">
+  <span><kbd>Space</kbd> Flip</span>
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> Nav</span>
+  <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Rate</span>
+  <span><kbd>S</kbd> Shuffle</span>
+</div>
+
+<script>
+// ============================================================
+// BLUEPRINT REFERENCE MAP
+// ============================================================
+const BP={
+'I-A-1':{area:'I',name:'IT Infrastructure',full:'Area I • A. Information Systems • 1. IT Infrastructure'},
+'I-A-2':{area:'I',name:'Enterprise & AIS',full:'Area I • A. Information Systems • 2. Enterprise & AIS'},
+'I-A-3':{area:'I',name:'Availability',full:'Area I • A. Information Systems • 3. Availability'},
+'I-A-4':{area:'I',name:'Change Management',full:'Area I • A. Information Systems • 4. Change Management'},
+'I-B':{area:'I',name:'Data Management',full:'Area I • B. Data Management'},
+'II-A':{area:'II',name:'Regulations & Frameworks',full:'Area II • A. Regulations, Standards & Frameworks'},
+'II-B-1':{area:'II',name:'Threats & Attacks',full:'Area II • B. Security • 1. Threats & Attacks'},
+'II-B-2':{area:'II',name:'Mitigation',full:'Area II • B. Security • 2. Mitigation'},
+'II-B-3':{area:'II',name:'Testing',full:'Area II • B. Security • 3. Testing'},
+'II-C':{area:'II',name:'Confidentiality & Privacy',full:'Area II • C. Confidentiality & Privacy'},
+'II-D':{area:'II',name:'Incident Response',full:'Area II • D. Incident Response'},
+'III-A':{area:'III',name:'SOC Planning & Performing',full:'Area III • A. SOC Planning & Performing'},
+'III-B':{area:'III',name:'SOC Reporting',full:'Area III • B. SOC Reporting'}
+};
+const AREAS=[
+{id:'I',name:'Area I — Information Systems & Data Management',weight:'35–45%',groups:['I-A-1','I-A-2','I-A-3','I-A-4','I-B']},
+{id:'II',name:'Area II — Security, Confidentiality & Privacy',weight:'35–45%',groups:['II-A','II-B-1','II-B-2','II-B-3','II-C','II-D']},
+{id:'III',name:'Area III — SOC Engagements',weight:'15–25%',groups:['III-A','III-B']}
+];
+
+const ALL=[
+// ===== UNIT 1 — FRAMEWORKS & STANDARDS =====
+// U1-M1: NIST Frameworks
+{id:'u1m1-1',u:'u1',m:'u1m1',mod:'M1: NIST Frameworks',pri:'red',bp:'II-A',q:'What are the 6 NIST CSF Core Functions (in order)?',a:'Govern → Identify → Protect → Detect → Respond → Recover\n\nThe CSF (Cybersecurity Framework) organizes cybersecurity risk management into these 6 functions.'},
+{id:'u1m1-2',u:'u1',m:'u1m1',mod:'M1: NIST Frameworks',pri:'red',bp:'II-A',q:'What are the 4 CSF Implementation Tiers?',a:'Tier 1: Partial (least sophisticated)\nTier 2: Risk-Informed\nTier 3: Repeatable\nTier 4: Adaptive (most sophisticated)\n\nTiers measure effectiveness of an organization\'s cybersecurity profile.'},
+{id:'u1m1-3',u:'u1',m:'u1m1',mod:'M1: NIST Frameworks',pri:'orange',bp:'II-A',q:'What is a CSF Organization Profile? What are the 3 types?',a:'A snapshot of a company\'s cybersecurity position.\n\n1. Current Profile — where the company is now\n2. Target Profile — where it wants to be\n3. Community Profile — industry template used to develop your own\n\n5-step approach: Scope → Gather info → Create profile → Analyze gaps → Implement action plan'},
+{id:'u1m1-4',u:'u1',m:'u1m1',mod:'M1: NIST Frameworks',pri:'orange',bp:'II-A',q:'NIST Privacy Framework: How many Core Functions? How does it differ from CSF?',a:'8 Core Functions:\nGovern → Identify → Control → Communicate → Protect → Detect → Respond → Recover\n\nAdds Control and Communicate vs CSF\'s 6.\nProfiles & Tiers are the SAME as CSF.'},
+{id:'u1m1-5',u:'u1',m:'u1m1',mod:'M1: NIST Frameworks',pri:'orange',bp:'II-A',q:'NIST SP 800-53: What are the 3 implementation approaches?',a:'1. Common (Inheritable) — controls at organizational level\n2. System-Specific — controls at information system level\n3. Hybrid — mix of both\n\nPurpose: Protect information systems from sophisticated threats.\nApplies via OMB and FISMA.'},
+
+// U1-M2: Privacy Standards
+{id:'u1m2-1',u:'u1',m:'u1m2',mod:'M2: Privacy Standards',pri:'red',bp:'II-A',q:'What is HIPAA? Who are Covered Entities?',a:'HIPAA protects healthcare information (PHI).\n\nCovered Entities:\n• Healthcare providers\n• Health plans\n• Healthcare clearinghouses\n• Business associates needing PHI access\n\nRequires: Administrative, Physical, and Technical safeguards.\nBreach notification: within 60 days (per HITECH amendment).'},
+{id:'u1m2-2',u:'u1',m:'u1m2',mod:'M2: Privacy Standards',pri:'orange',bp:'II-A',q:'What are the 3 types of HIPAA safeguards?',a:'1. Administrative Safeguards — policies and people-focused rules\n2. Physical Safeguards — physical places and devices\n3. Technical Safeguards — technology-based protections\n\nAll covered entities must:\n• Ensure confidentiality, integrity, availability of electronic PHI\n• Protect against anticipated threats\n• Prevent unauthorized uses/disclosures\n• Ensure workforce compliance'},
+{id:'u1m2-3',u:'u1',m:'u1m2',mod:'M2: Privacy Standards',pri:'orange',bp:'II-A',q:'What is GDPR and who does it apply to?',a:'European Union\'s law to protect personal data.\n\nApplies to:\n1. Data processors based in the EU\n2. Data processors NOT in EU but doing business in EU\n\nUS-EU data transfer agreements (both invalidated):\n• Safe Harbor (2000-2015)\n• Privacy Shield (2016-2020)'},
+{id:'u1m2-4',u:'u1',m:'u1m2',mod:'M2: Privacy Standards',pri:'white',bp:'II-A',q:'What is PCI DSS?',a:'Payment Card Industry Data Security Standard\n\nCreated by the PCI Security Council to enhance payment security in cashless transactions.\n\nYou don\'t need to memorize the 12 requirements, but understand which goals apply to each requirement.'},
+
+// U1-M3: CIS Controls Part 1
+{id:'u1m3-1',u:'u1',m:'u1m3',mod:'M3: CIS Controls Pt 1',pri:'red',bp:'II-A',q:'What are CIS Implementation Groups (IGs)?',a:'Tiers that prioritize which controls to apply based on org size:\n\nIG1: Small/medium org, limited cybersecurity, less sensitive data (NIST Tier 1-2)\nIG2 (includes IG1): Bigger org, sensitive data (NIST Tier 3)\nIG3 (includes IG1+IG2): Biggest org, very sensitive data (NIST Tier 4)\n\nDesign Principles: Context, Coexistence, Consistency'},
+{id:'u1m3-2',u:'u1',m:'u1m3',mod:'M3: CIS Controls Pt 1',pri:'orange',bp:'II-A',q:'CIS Controls 1-9: Name them.',a:'1. Inventory & Control of Enterprise Assets (hardware)\n2. Inventory & Control of Software Assets\n3. Data Protection (classify by sensitivity)\n4. Secure Configuration of Assets & Software\n5. Account Management (credentials/authorization)\n6. Access Control Management (privilege)\n7. Continuous Vulnerability Management\n8. Audit Log Management\n9. Email and Web Browser Protections'},
+{id:'u1m3-3',u:'u1',m:'u1m3',mod:'M3: CIS Controls Pt 1',pri:'white',bp:'II-A',q:'System logs vs Audit logs vs Event logs?',a:'System logs: Record system-level events (updates, errors, crashes, service starts/stops)\nAudit logs: Record user-related events (logins, file access, permission changes, app usage)\nEvent logs: Broadest term — contains both system and audit logs'},
+
+// U1-M4: CIS Controls Part 2
+{id:'u1m4-1',u:'u1',m:'u1m4',mod:'M4: CIS Controls Pt 2',pri:'orange',bp:'II-A',q:'CIS Controls 10-18: Name them.',a:'10. Malware Defenses\n11. Data Recovery\n12. Network Infrastructure Management\n13. Network Monitoring and Defense\n14. Security Awareness and Skills Training\n15. Service Provider Management\n16. Application Software Security\n17. Incident Response Management\n18. Penetration Testing'},
+
+// U1-M5: COBIT 2019
+{id:'u1m5-1',u:'u1',m:'u1m5',mod:'M5: COBIT 2019',pri:'red',bp:'II-A',q:'What is COBIT 2019? What are the 6 Governance Principles? (VHDDTE)',a:'COBIT: Developed by ISACA for IT governance & management best practices.\n\n6 Principles — "Very Healthy Dieters Do Try Everything":\n1. Provide Stakeholder VALUE\n2. HOLISTIC Approach\n3. DYNAMIC Governance System\n4. Governance DISTINCT from Management\n5. TAILORED to Enterprise Needs\n6. END-TO-END Governance System'},
+{id:'u1m5-2',u:'u1',m:'u1m5',mod:'M5: COBIT 2019',pri:'red',bp:'II-A',q:'COBIT Core Model: Governance + Management domains?',a:'1 Governance Domain:\n• EDM — Evaluate, Direct, and Monitor\n\n4 Management Domains:\n• APO — Align, Plan, and Organize\n• BAI — Build, Acquire, and Implement\n• DSS — Deliver, Service, and Support\n• MEA — Monitor, Evaluate, and Assess'},
+{id:'u1m5-3',u:'u1',m:'u1m5',mod:'M5: COBIT 2019',pri:'orange',bp:'II-A',q:'COBIT: Governance vs Management?',a:'Governance: Leaders of the org (BoD, Audit Committee)\n• Evaluates, directs, monitors\n\nManagement: Responsible for daily planning & administration\n• Selected & guided by BoD\n• eg: CEO, CFO, COO\n\nKey: Governance is DISTINCT from Management (Principle #4)'},
+{id:'u1m5-4',u:'u1',m:'u1m5',mod:'M5: COBIT 2019',pri:'white',bp:'II-A',q:'What are COBIT Design Factors?',a:'11 factors used to tailor the governance system:\nEnterprise Strategy, Enterprise Goals, Risk Profile, IT-Related Issues, Threat Landscape, Compliance Requirements, Role of IT, Sourcing Model, IT Implementation Methods, Enterprise Size, Industry\n\nFocus Areas: Highlight particular aspects needing attention (cybersecurity, digital transformation, cloud)\n\nFormula: COBIT Core Model × (Design Factors + Focus Areas) = Tailored IT Governance'},
+
+// ===== UNIT 2 — IT INFRASTRUCTURE & DATA =====
+// U2-M1: IT Infrastructure
+{id:'u2m1-1',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'red',bp:'I-A-1',q:'OSI Model: Name all 7 layers. (APSTNDP)',a:'"APS(apps) That Never Drop Power"\n\n7. Application — interface between apps and network (HTTP)\n6. Presentation — encrypts & transforms data\n5. Session — establishes communication sessions\n4. Transport — validates data integrity\n3. Network — routes data, assigns IP addresses\n2. Data Link — ensures accurate routing, assigns MAC addresses\n1. Physical — converts to bits for transmission'},
+{id:'u2m1-2',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'red',bp:'I-A-1',q:'Network devices: Modem vs Router vs Switch vs Firewall vs Gateway?',a:'Modem: Connects to ISP, converts analog→digital, has unique IP (door to internet)\nRouter: Connects DIFFERENT networks, assigns IP addresses (traffic cop)\nSwitch: Connects devices within SAME LAN, forwards internally, does NOT assign IPs\nFirewall: Filters network traffic through security rules\nGateway: Intermediary between different networks, transforms protocols'},
+{id:'u2m1-3',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'red',bp:'I-A-1',q:'What are the 5 types of firewalls?',a:'1. Circuit-Level Gateways — verifies SOURCE of packet\n2. Application-Level Gateways — inspects the PACKET itself\n3. NAT Firewalls — assigns internal addresses to approved external sources\n4. Stateful Multilayer Inspection — combines multiple firewall types\n5. Next-Gen Firewalls — different rules per application/user'},
+{id:'u2m1-4',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'orange',bp:'I-A-1',q:'Network topologies: Bus, Mesh, Ring, Star?',a:'Bus (Linear): All nodes on single line. Con: central fails = all offline\nMesh (Rhombus): Numerous connections. Con: expensive to maintain\nRing (Circular): Uni/multidirectional. Pro: less collision. Con: slow\nStar: All nodes connect to one central hub/switch'},
+{id:'u2m1-5',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'red',bp:'I-A-1',q:'Cloud models: IaaS vs PaaS vs SaaS vs BPaaS?',a:'IaaS (Infrastructure): Rent hardware (servers, storage, networking)\nPaaS (Platform): Ready-made platform to build/deploy apps\nSaaS (Software): Use finished software over internet, no installation\nBPaaS (Business Process): SaaS delivering specific business functions (outsourced payroll, billing)'},
+{id:'u2m1-6',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'orange',bp:'I-A-1',q:'LAN vs WAN vs DMZ vs VPN vs SD-WAN?',a:'LAN: Limited geographic area (home, single office)\nWAN: Larger area (cities, countries)\nDMZ: Separate network between LAN and internet to protect LAN\nVPN: Secure encrypted tunnel between device and network over internet\nSD-WAN: Monitors WAN performance and manages traffic to optimize connectivity'},
+{id:'u2m1-7',u:'u2',m:'u2m1',mod:'M1: IT Infrastructure',pri:'orange',bp:'I-A-1',q:'Cloud deployment models and shared responsibility?',a:'Deployment Models:\n• Public Cloud — shared infrastructure (AWS, Azure, GCP)\n• Private Cloud — dedicated to one org\n• Hybrid Cloud — mix of public and private\n\nShared Responsibility Model:\n• Provider responsible for: physical security, infrastructure, hypervisor\n• Customer responsible for: data, access controls, applications, OS config\n• Responsibility shifts based on IaaS vs PaaS vs SaaS (more provider control = less customer responsibility)'},
+
+// U2-M2: Enterprise & AIS
+{id:'u2m2-1',u:'u2',m:'u2m2',mod:'M2: Enterprise & AIS',pri:'red',bp:'I-A-2',q:'What is an AIS? What are its 3 subsystems?',a:'Accounting Information System — part of ERP, used by accountants.\n\nSubsystems:\n1. TPS (Transaction Processing System) — daily operations\n2. FRS (Financial Reporting System) — financial reporting\n3. MRS (Management Reporting System) — internal decisions (budgeting, variance)\n\nAIS Events Trail: Source doc → Journal → Ledger → Trial Balance → Financial Statements'},
+{id:'u2m2-2',u:'u2',m:'u2m2',mod:'M2: Enterprise & AIS',pri:'orange',bp:'I-A-2',q:'Name the 6 AIS Transaction Cycles.',a:'1. Revenue & Cash Collections — sales, invoicing, inventory, shipping\n2. Purchasing & Disbursement — POs, vendor verification, AP, payments\n3. HR & Payroll — employment data, timekeeping, payroll, labor costs\n4. Production & Fixed Assets — WIP, cost tracking, depreciation, disposals\n5. Treasury — cash transactions, bank reconciliations\n6. General Ledger & Reporting — consolidates all cycles, trial balances, closing'},
+{id:'u2m2-3',u:'u2',m:'u2m2',mod:'M2: Enterprise & AIS',pri:'orange',bp:'I-A-2',q:'Trust Services Criteria: CAPPS?',a:'C — Confidentiality: Protects designated confidential information\nA — Availability: Systems accessible and operational\nP — Processing Integrity: Complete, valid, accurate, timely, authorized\nP — Privacy: Personal info properly collected/used/retained/disclosed/disposed\nS — Security: Protects from unauthorized access/disclosure/damage\n\nUsed in SOC 2 and SOC 3 engagements.'},
+
+// U2-M3: BIA & Disaster Recovery
+{id:'u2m3-1',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'red',bp:'I-A-3',q:'BIA Loss Formulas: ARO, EF, SLE, ALE?',a:'ARO (Annualized Rate of Occurrence): Expected frequency per year\n= # occurrences / # relevant years\n\nEF (Exposure Factor): Damage as % of asset value\n\nSLE (Single Loss Expectancy): Cost of ONE loss\n= EF × Asset Value\n\nALE (Annualized Loss Expectancy): Cost per year\n= ARO × SLE'},
+{id:'u2m3-2',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'red',bp:'I-A-3',q:'System availability metrics: MTD, RPO, RTO, RTA, RPA, MTTR?',a:'MTD (Maximum Tolerable Downtime): Max time business tolerates outage\nRPO (Recovery Point Objective): Target max period of data LOSS\nRTO (Recovery Time Objective): Max time to RESTORE operations\nRTA (Recovery Time Actual): Actual time to restore\nRPA (Recovery Point Actual): Actual point data was restored to\nMTTR (Mean Time to Repair): Average time to repair a failed system'},
+{id:'u2m3-3',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'red',bp:'I-A-3',q:'Cold Site vs Warm Site vs Hot Site?',a:'Cold Site: Has electrical/physical infrastructure but LACKS hardware. Cheapest.\nWarm Site: Hardware installed but lacks FULL processing capabilities. Moderate cost.\nHot Site: Fully equipped, pre-wired, essential data files. Ready for immediate use. Most expensive.'},
+{id:'u2m3-4',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'red',bp:'I-A-3',q:'System backup types: Full vs Incremental vs Differential?',a:'Full: Exact copy of entire database\nIncremental: Copies changes since last backup of ANY type\nDifferential: Copies ALL changes since last FULL backup'},
+{id:'u2m3-5',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'orange',bp:'I-A-3',q:'Disaster Recovery vs Business Continuity vs Crisis Management?',a:'Disaster Recovery → IT functions (restoring systems & data)\nBusiness Continuity → non-IT, operational & personnel functions\nCrisis Management → large-scale incidents considered a crisis\n\nBusiness Continuity Plans: Relocating facilities, HR tasks, customer/supplier relationships.'},
+{id:'u2m3-6',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'orange',bp:'I-A-3',q:'BIA: What are the 7 steps?',a:'1. Establish the BIA Approach\n2. Identify Critical Resources\n3. Define Disruption Impacts\n4. Estimate Losses (ARO, EF, SLE, ALE)\n5. Establish Recovery Priorities\n6. Create the BIA Report\n7. Implement BIA Recommendations'},
+{id:'u2m3-7',u:'u2',m:'u2m3',mod:'M3: BIA & DR',pri:'orange',bp:'I-A-3',q:'System availability controls (5 types)?',a:'1. Physical Controls: Door locks, cameras, fire alarms/sprinklers\n2. IT Infrastructure Controls: Anti-malware, access controls, network security\n3. UPS (Uninterruptible Power Supply): Battery backup\n4. Redundancy: Redundant hardware, software, storage\n5. RAID (Redundant Arrays of Independent Drives): Multiple drives\n\nAlso: Mirroring, Replication, Secondary Internet Sources'},
+
+// U2-M4: Change Management
+{id:'u2m4-1',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'red',bp:'I-A-4',q:'5 system conversion methods?',a:'1. Direct: Stop old, start new immediately (RISKIEST)\n2. Parallel: Run BOTH simultaneously (SAFEST)\n3. Pilot: Test in one small segment first\n4. Phased (Gradual): Implement in stages across org\n5. Hybrid: Combination of any above'},
+{id:'u2m4-2',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'red',bp:'I-A-4',q:'5 environments for implementing changes?',a:'1. Development — programmers write code/prototypes\n2. Testing — developers test and debug\n3. Staging — final testing in production-like environment (UAT)\n4. Production — deployed to end users\n5. Disaster Recovery — ensures apps can be restored'},
+{id:'u2m4-3',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'red',bp:'I-A-4',q:'Change management testing types?',a:'1. Unit Testing — examining the smallest unit of an application\n2. Integration Testing (Thread/String) — testing combined components\n3. System Testing — overall functionality of the program\n4. Acceptance Testing — developers/customers assess if meets requirements'},
+{id:'u2m4-4',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'orange',bp:'I-A-4',q:'Waterfall vs Agile methodology?',a:'Waterfall (flows one direction): Sequential, each team works off the preceding team. Linear, rigid.\n\nAgile: Teams work simultaneously in short cycles (sprints), continuous communication, feedback, and ability to adapt.'},
+{id:'u2m4-5',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'orange',bp:'I-A-4',q:'Change management controls and risks?',a:'Controls: Policies, Emergency Change Policies, Standardized Requests, Impact Assessment, Authorization, Separation of Duties, Pre/Post-implementation Testing, Monitoring, Rollback\n\nRisks:\n• Selection: Lack of expertise, incompatibility\n• Integration: User resistance, lack of management support\n• Outsourcing: Lack of org knowledge, security concerns'},
+{id:'u2m4-6',u:'u2',m:'u2m4',mod:'M4: Change Mgmt',pri:'orange',bp:'I-A-4',q:'What is patch management?',a:'Process of managing updates to software and systems:\n\n1. Prioritizing — rank patches by severity/impact\n2. Scheduling — plan deployment windows\n3. Validating — confirm patch is legitimate\n4. Testing — test in non-production environment first\n5. Deploying — roll out to production\n6. Monitoring — verify successful installation\n\nCritical for closing security vulnerabilities and maintaining compliance.'},
+
+// U2-M5: Data Life Cycle
+{id:'u2m5-1',u:'u2',m:'u2m5',mod:'M5: Data Life Cycle',pri:'red',bp:'I-B',q:'8 steps of the Data Life Cycle? (DCPSAPAP)',a:'1. Definition — define what data is needed\n2. Capture/Creation — obtain data internally or externally\n3. Preparation — clean, complete, encrypt, make user-friendly\n4. Synthesis — (optional) transform/calculate for analysis\n5. Analysis — create reports and inform decisions\n6. Publication — share/distribute (once external, lose sole control)\n7. Archival — move from active to passive storage\n8. Purging — remove from storage (end of life cycle)'},
+{id:'u2m5-2',u:'u2',m:'u2m5',mod:'M5: Data Life Cycle',pri:'orange',bp:'I-B',q:'Input check types (6)?',a:'Field Check: Input type matches field requirement\nLimit Check: Values within predefined upper/lower limits\nSize Check: Characters don\'t exceed max allowed\nCompleteness Check: No missing mandatory fields\nValidity Check: Data verified vs predefined rules (zip code, phone)\nReasonableness Check: Warns if values deviate from normal/expected'},
+{id:'u2m5-3',u:'u2',m:'u2m5',mod:'M5: Data Life Cycle',pri:'orange',bp:'I-B',q:'ETL and data collection types?',a:'ETL (Extract, Transform, Load): Extract data from source → Transform into useful info → Load into analysis tool\n\nActive Data Collection: Directly asking sources (surveys, interviews)\nPassive Data Collection: Without direct input (cookies, timestamps, web tracking)'},
+
+// U2-M6: Databases & SQL
+{id:'u2m6-1',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'Relational DB: Tables, Attributes, Records, Fields, Keys?',a:'Table: Stores data about a specific entity type\nAttributes (Columns): Properties of an entity; each must be unique\nRecords (Rows): One entity\'s information\nFields (Cells): Where data values are entered\n\nPrimary Key: Unique identifier (required in every table)\nComposite Primary Key: Multiple attributes together form unique ID\nForeign Key: Attribute in one table that is a primary key in another → creates relationships'},
+{id:'u2m6-2',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'Database Normal Forms: 1NF, 2NF, 3NF?',a:'1NF: Each cell has only ONE piece of info + each record uniquely identified by primary key\n2NF: Every non-key attribute depends on the ENTIRE primary key (or composite key)\n3NF: No non-key attribute depends on another non-key attribute\n\nForms are progressive — 3NF requires 1NF and 2NF first.\nPurpose: Eliminate redundant data and ensure logical storage.'},
+{id:'u2m6-3',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'Data Warehouse vs Data Mart vs Data Lake vs ODS?',a:'ODS: Temporary storage between source and warehouse\nData Warehouse: Large centralized repository (PROCESSED data)\nData Mart: Subset of warehouse, specific area (marketing, logistics)\nData Lake: Like warehouse but NO predefined schema — RAW, unprocessed data'},
+{id:'u2m6-4',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'Star Schema vs Snowflake Schema?',a:'Fact Table: Stores measures/metrics (numbers — Sales, COGS)\nDimension Table: Stores descriptive context (dates, product names)\n\nStar Schema: Central fact table with dimension tables surrounding it. Simplest & most common.\nSnowflake Schema: Dimension tables broken into multiple related tables. More complex.'},
+{id:'u2m6-5',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'SQL clauses: SELECT, FROM, WHERE, GROUP BY, ORDER BY, HAVING?',a:'SELECT: Which columns (SELECT * = all)\nFROM: Which table(s)\nWHERE: Filters rows BEFORE aggregation\nGROUP BY: Groups rows for aggregates (SUM, COUNT, AVG, MIN, MAX)\nORDER BY: Sorts ascending/descending\nHAVING: Filters AFTER aggregation (like WHERE for grouped data)'},
+{id:'u2m6-6',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'red',bp:'I-B',q:'SQL JOINs: INNER, LEFT, RIGHT?',a:'INNER JOIN: Only matching rows in BOTH tables. Order doesn\'t matter.\nLEFT JOIN: ALL rows from LEFT + matching from right. Order matters.\nRIGHT JOIN: ALL rows from RIGHT + matching from left. Order matters.\n\nSyntax:\nFROM table1\nINNER/LEFT/RIGHT JOIN table2\nON table1.key = table2.key'},
+{id:'u2m6-7',u:'u2',m:'u2m6',mod:'M6: Databases & SQL',pri:'orange',bp:'I-B',q:'Data Dictionary and Database Model stages?',a:'Data Dictionary: Metadata — "Data about Data". Describes contents, format, structure.\n\nData Model Stages:\n• Conceptual: Big-picture, main entities and relationships\n• Logical: More detailed, adds attributes, primary/foreign keys\n• Physical: Most detailed, includes data types and character limits'},
+
+// U2-M7: BPMN & DFD
+{id:'u2m7-1',u:'u2',m:'u2m7',mod:'M7: BPMN & DFD',pri:'orange',bp:'I-B',q:'BPMN symbols: Pools, Lanes, Events, Tasks, Gateways?',a:'Swim Pools: How many organizations involved (min 1 pool)\nSwim Lanes: Segregation of duties within an org (roles)\n\nEvents:\n• Start Events — smooth circles (mandatory)\n• End Events — bold circles (mandatory)\n• Intermediate Events — two-lined circles (as needed)\n\nTasks: Actions — rectangles with rounded edges\nGateways: Decision points — diamond shapes\n\nConnecting Objects:\n• Sequence Flows — solid arrows (order)\n• Message Flows — dashed arrows (between pools)'},
+
+// ===== UNIT 3 — SECURITY =====
+// U3-M1: Threats & Attacks
+{id:'u3m1-1',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'orange',bp:'II-B-1',q:'Types of threat agents?',a:'Attacker/Hacker: Targets people/orgs to gain system access\nAdversary: Incentivized for malicious actions (intercepting, theft)\nNation-State Actors: Government-funded espionage\nHacktivists: Promote social/political agendas\nInsiders: Employees who turn malicious or join with harmful intent'},
+{id:'u3m1-2',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'red',bp:'II-B-1',q:'Key network-based attacks?',a:'Backdoors/Trapdoors: Undocumented entry points bypassing security\nCovert Channels: Secret communication (storage or timing)\nDDoS: Multiple attackers flood network with traffic\nMITM: Intercepts communications between two parties\nRansomware: Locks systems until ransom paid\nReplay: Intercepted messages resent later\nSpoofing: Impersonating someone for unauthorized access\nBuffer Overflow: Overloads program\'s temporary storage\nPort Scanning: Finds misconfigured open ports'},
+{id:'u3m1-3',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'orange',bp:'II-B-1',q:'Application-based attacks: SQL Injection vs XSS?',a:'SQL Injection: Injects malicious SQL into website server to access DATABASE (targets company database)\n\nCross-Site Scripting (XSS): Injects code into website that attacks USERS visiting the site (targets website\'s users)\n\nRace Condition: Exploits sequence-dependent operations by triggering simultaneous/out-of-order actions'},
+{id:'u3m1-4',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'red',bp:'II-B-1',q:'Social engineering attacks: Phishing types?',a:'Phishing: Fake emails requesting info or directing to fake website\nSpear Phishing: Targets specific employees posing as HR/IT\nBusiness Email Compromise (Whaling): Targets executives for wire transfers\nPretexting: Creates fake identity/scenario to create urgency\nVishing: Fraudulent phone calls\nPharming: Redirects from legitimate to fraudulent website\nCatfishing: Fake online persona to lure victims'},
+{id:'u3m1-5',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'orange',bp:'II-B-1',q:'Types of malware/viruses?',a:'Overwrite virus: Deletes/overwrites infected file info\nMulti-partite virus: Uses mixture of infection methods\nParasitic virus: Hides in legitimate programs\nPolymorphic virus: Mutates to avoid detection\nResident virus: Installs copy in computer memory\n\nOther: Brute Force (guesses passwords), Keystroke Logging (tracks key presses), Rogue Mobile Apps (malicious apps that look legit)'},
+{id:'u3m1-6',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'orange',bp:'II-B-1',q:'Spoofing types?',a:'ARS (Address Resolution Spoofing): Falsifies MAC-IP mappings to redirect traffic\nDNS Spoofing: Alters DNS records so domains point to fake sites\nHyperlink Spoofing: Link looks safe but goes to malicious URL'},
+{id:'u3m1-7',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'red',bp:'II-B-1',q:'What are the 6 stages of a cyber-attack?',a:'1. Reconnaissance — gather intel on target (passive/active scanning)\n2. Gaining Access — exploit vulnerabilities to enter system\n3. Escalation of Privileges — elevate to admin/root access\n4. Maintaining Access — install backdoors, rootkits to stay in\n5. Network Exploitation — move laterally, access other systems/data\n6. Covering Tracks — delete logs, hide evidence of intrusion'},
+{id:'u3m1-8',u:'u3',m:'u3m1',mod:'M1: Threats & Attacks',pri:'orange',bp:'II-B-1',q:'Cybersecurity risks: Cloud vs IoT vs Mobile?',a:'Cloud Risks:\n• Data breaches, misconfigurations, shared responsibility gaps\n• Unauthorized access, insecure APIs, lack of visibility\n\nIoT Risks:\n• Weak/default passwords, unpatched firmware\n• Large attack surface, lack of encryption\n• Physical access to devices\n\nMobile Risks:\n• Lost/stolen devices, malicious apps\n• Unsecured Wi-Fi, jailbreaking/rooting\n• BYOD policy gaps, data leakage'},
+
+// U3-M2: Mitigation & Controls
+{id:'u3m2-1',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'red',bp:'II-B-2',q:'COSO 5 components? (CRIME)',a:'C — Control Environment (tone at the top)\nR — Risk Assessment\nI — Information & Communication\nM — Monitoring Activities\nE — (Existing) Control Activities\n\nCOSO 2013: Latest framework\nCOSO 2017 ERM: Companion to 2013\n\n3 Internal Objectives:\n1. Operational (effectiveness/efficiency)\n2. Reporting (financial/nonfinancial)\n3. Compliance (laws & regulations)'},
+{id:'u3m2-2',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'red',bp:'II-B-2',q:'Security Policies vs Standards vs SOPs?',a:'Security Policies (Uppermost): Overview of org\'s security needs & strategic plan\nSecurity Standards (Middle): Guidelines mandated by law or industry (NIST, GDPR, PCI DSS)\nSOPs (Lowest): Detailed instructions on HOW to achieve policy & standard goals'},
+{id:'u3m2-3',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'red',bp:'II-B-2',q:'Authentication: 3 factor types?',a:'Type 1 — Knowledge: Something you KNOW (password, PIN)\nType 2 — Possession: Something you HAVE (smart card, token, phone)\nType 3 — Biometric: Something you ARE (fingerprint, retina)\n\nMultifactor: Uses 2+ of these types.\nSSO (Single Sign-On): Log in once, access multiple apps.'},
+{id:'u3m2-4',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'red',bp:'II-B-2',q:'Access control models: DAC, MAC, RBAC?',a:'Discretionary (DAC): Data OWNER decides who gets access\nMandatory (MAC): ADMINISTRATOR centrally manages via rules\nRole-Based (RBAC): Access based on user\'s JOB ROLE\nRule-Based: Based on predetermined set of rules\nPolicy-Based: Combination of roles AND rules\nRisk-Based: Based on asset risk and security risk level'},
+{id:'u3m2-5',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'Zero Trust, Least Privilege, Need-to-Know?',a:'Zero Trust: Assumes network is ALWAYS at risk. Requires continuous validation. (NIST ZTNA)\n\nLeast Privilege: Minimum AUTHORIZATION to perform function (controls actions)\n\nNeed-to-Know: Only information needed for job (controls information access)\n\nAllowlisting: Only approved apps run\nDenylisting: Blocks unauthorized apps'},
+{id:'u3m2-6',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'IDS vs IPS? Preventive vs Detective controls?',a:'IDS: Monitors and DETECTS attacks but cannot prevent them\nIPS: Detects AND PREVENTS cyberattacks before they reach targets\n\nPreventive Controls: Stop activity before it occurs (firewalls, encryption, patches, IPS)\nDetective Controls: Detect threats WHILE occurring (IDS, monitoring, audit logs)'},
+{id:'u3m2-7',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'Tokens: Synchronous vs Asynchronous? Hashing?',a:'Synchronous Token: Time-based; token and server synchronized\nAsynchronous Token: No clocks; passcodes from same algorithm, expire quickly\n\nHashing: Converts passwords to unreadable text using SHA. CANNOT be reversed.\nSalting: Adding random values before hashing\nIteration Count: Number of times hashed before storing'},
+{id:'u3m2-8',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'System hardening types?',a:'Database Hardening: Different privilege levels; encrypt data at rest\nEndpoint Hardening: Remove user rights; restrict downloads; enable firewalls\nNetwork Hardening: Close unused ports; block unnecessary protocols\nServer Hardening: Secure facility; backup servers at different location'},
+{id:'u3m2-9',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'white',bp:'II-B-2',q:'Defense-in-Depth?',a:'Multilayered approach combining:\n• People (IT experts)\n• Policies (governing policies)\n• Technology (antivirus, firewalls)\n• Physical (gates, locks, cameras)\n• Logical access controls (authentication)\n\nProcess Layering: Break operations into separate chunks\nAbstraction: Limit access to essential details\nHardware Segmentation: Physical separation'},
+{id:'u3m2-10',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'What is vulnerability management?',a:'Systematic process to identify, evaluate, treat, and report security vulnerabilities.\n\nSteps:\n1. Identify vulnerabilities (scanning tools)\n2. Evaluate severity and risk\n3. Prioritize based on impact\n4. Remediate (patch, reconfigure, accept risk)\n5. Verify fix was effective\n6. Report and document\n\nGoal: Reduce attack surface and maintain security posture.'},
+{id:'u3m2-11',u:'u3',m:'u3m2',mod:'M2: Mitigation & Controls',pri:'orange',bp:'II-B-2',q:'Technology acceptable use policy and BYOD?',a:'Acceptable Use Policy (AUP):\n• Defines acceptable/unacceptable use of org IT resources\n• Covers email, internet, software installation, data handling\n• Employees acknowledge and sign\n\nBYOD (Bring Your Own Device):\n• Policy for personal devices used for work\n• Considerations: encryption, remote wipe, containerization\n• Separates personal and corporate data\n• MDM (Mobile Device Management) enforces policies'},
+
+// U3-M3: Security Testing (NEW)
+{id:'u3m3-1',u:'u3',m:'u3m3',mod:'M3: Security Testing',pri:'red',bp:'II-B-3',q:'Penetration testing vs Vulnerability scanning? Security assessment reports?',a:'Vulnerability Scanning: AUTOMATED tool scans for known vulnerabilities. Does NOT exploit them. Broader but shallower.\n\nPenetration Testing: SIMULATED attack by authorized testers who actively EXPLOIT vulnerabilities. Deeper analysis, finds chained weaknesses.\n\nSecurity Assessment Report:\n• Documents issues, findings, and recommendations\n• Created during tests of controls\n• Includes scope, methodology, risk ratings, remediation steps\n\nSecurity Awareness Training: Educates personnel on threats, appropriate behaviors, and org security policies.'},
+
+// U3-M4: Confidentiality & Privacy
+{id:'u3m4-1',u:'u3',m:'u3m4',mod:'M4: Confidentiality',pri:'red',bp:'II-C',q:'Encryption vs Tokenization vs Data Masking vs Hashing?',a:'Encryption: Scrambles data using cryptography; needs key to decipher\n(1234 5678 → G09xKsad)\n\nTokenization: Replaces with dummy token; preserves length/format; keys in token vault\n(1234 → TKN-98X4)\n\nData Masking: Hides original while keeping structure\n(1234 5678 → xxxx xxxx xx34)\n\nHashing: Converts to unreadable text; CANNOT be reversed\n(1234 5678 → a8b64ba...)'},
+{id:'u3m4-2',u:'u3',m:'u3m4',mod:'M4: Confidentiality',pri:'red',bp:'II-C',q:'Symmetric vs Asymmetric encryption?',a:'Symmetric (FASTER): Single shared private key for encrypt AND decrypt\n• Weakness: No non-repudiation, hard to scale\n\nAsymmetric (MORE SECURE): Pair of keys — public and private\n• Weakness: Slower (longer keys, more complex)\n\nPublic Keys → Can be shared openly\nPrivate Keys → Must be kept secret'},
+{id:'u3m4-3',u:'u3',m:'u3m4',mod:'M4: Confidentiality',pri:'orange',bp:'II-C',q:'De-identification, Pseudonymization, Anonymization?',a:'De-identification: Remove/modify personal details so data can\'t identify anyone\nPseudonymization: Replace identifiable details with aliases (TYPE of de-identification)\nAnonymization: Remove ALL identifiable data points (used in research)'},
+{id:'u3m4-4',u:'u3',m:'u3m4',mod:'M4: Confidentiality',pri:'orange',bp:'II-C',q:'DLP (Data Loss Prevention) types?',a:'DLP enables orgs to detect/prevent unauthorized transfer of sensitive info.\n\nNetwork-based: Monitors outgoing data (emails, FTP, messages)\nCloud-based: Same but in cloud environment\nEndpoint-based: Scans files on local devices or sent to external (printers, USB)\n\nUses pattern matching or word-recognition to scan for specific formats.'},
+{id:'u3m4-5',u:'u3',m:'u3m4',mod:'M4: Confidentiality',pri:'orange',bp:'II-C',q:'Methods of deleting confidential information?',a:'Deleting/Erasing: Permanently removes, even from archives\nOverwriting/Clearing: Prepares media for reuse with non-sensitive data\nPhysical Destruction: Dismantling or chemically altering (MOST EFFECTIVE)\nPurging: Removes from active systems but may still exist in archives\nDegaussing: Strong magnetic field erases magnetic storage'},
+
+// U3-M5: Incident Response
+{id:'u3m5-1',u:'u3',m:'u3m5',mod:'M5: Incident Response',pri:'red',bp:'II-D',q:'7 steps of Incident Response?',a:'1. Preparation — assemble personnel, tools, IDS/IPS, training\n2. Detection — recognize deviations, classify events vs incidents\n3. Containment — isolate threat, take systems offline\n4. Eradication — remove threat, restore from clean backups\n5. Reporting — communicate to management and affected parties\n6. Recovery — restore to fully functional state (phased approach)\n7. Post-Incident / Lessons Learned — examine, update IRP'},
+{id:'u3m5-2',u:'u3',m:'u3m5',mod:'M5: Incident Response',pri:'orange',bp:'II-D',q:'SANS IRP vs NIST IRP?',a:'SANS (6 phases):\nPreparation → Identification → Containment → Eradication → Recovery → Lessons Learned\n\nNIST (4 phases):\nPreparation → Detection and Analysis → Containment, Eradication, and Recovery → Post-Incident Activity\n\nKey diff: SANS uses "Identification" not "Detection"; NIST combines containment/eradication/recovery.'},
+{id:'u3m5-3',u:'u3',m:'u3m5',mod:'M5: Incident Response',pri:'orange',bp:'II-D',q:'Event vs Adverse Event vs Incident?',a:'Event: Any observable occurrence (broadest — user login, email)\nCybersecurity Event: Change that MAY impact org\nAdverse Event: NEGATIVE consequences (crashes, malware, unauthorized access)\nIncident: THREATENS confidentiality, integrity, or availability\nComputer Security Incident: Caused by malicious HUMAN intent\nCybersecurity Incident: CONFIRMED impact, requiring response'},
+{id:'u3m5-4',u:'u3',m:'u3m5',mod:'M5: Incident Response',pri:'orange',bp:'II-D',q:'CIA Triad and Threat Modeling?',a:'CIA Triad: Confidentiality, Integrity, Availability\n\nThreat Modeling Phases:\n1. Identify Assets\n2. Identify Threats\n3. Reduction Analysis (decomposition)\n4. Analyze Impact\n5. Develop Countermeasures\n6. Review and Evaluate\n\nMethodologies: PASTA (risk-focused), VAST (agile), STRIDE (Microsoft)'},
+
+// ===== UNIT 4 — SOC ENGAGEMENTS =====
+// U4-M1: SOC Types
+{id:'u4m1-1',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'red',bp:'III-A',q:'SOC 1 vs SOC 2 vs SOC 3?',a:'SOC 1: Controls relevant to user entities\' INTERNAL CONTROL OVER FINANCIAL REPORTING. Restricted audience.\n\nSOC 2: Controls evaluated against Trust Services Criteria (CAPPS). Detailed. Specified/restricted audience.\n\nSOC 3: Same as SOC 2 but LESS detailed — for GENERAL PUBLIC.\n\nAlso: SOC for Cybersecurity and SOC for Supply Chain.'},
+{id:'u4m1-2',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'red',bp:'III-A',q:'Type 1 vs Type 2 SOC Reports?',a:'Type 1: Evaluates system description and control DESIGN at a POINT IN TIME.\nType 2: Evaluates description, design, AND OPERATING EFFECTIVENESS over a PERIOD OF TIME.\n\nSOC 1 and SOC 2 → can be Type 1 or Type 2\nSOC 3 → ALWAYS Type 2'},
+{id:'u4m1-3',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'red',bp:'III-A',q:'User Entity vs Service Org vs Subservice Org?',a:'User Entity: The org utilizing the services (the client)\nService Organization: The one providing the service (outsourced payroll, cloud provider)\nSubservice Organization: A vendor used BY the service org whose controls are relevant'},
+{id:'u4m1-4',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'red',bp:'III-A',q:'COSO Framework for SOC: 5 components?',a:'1. Control Environment — tone at the top, ethics\n2. Risk Assessment — identify risks, consider fraud\n3. Information & Communication — obtain, control info flow\n4. Monitoring Activities — ongoing evaluations\n5. (Existing) Control Activities — policies ensuring guidelines applied\n\nFor SOC 2/3, add TSC: Availability, Processing Integrity, Confidentiality, Privacy\nSecurity uses Common Criteria ALONE.'},
+{id:'u4m1-5',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'orange',bp:'III-A',q:'SOC report contents (SOC 1 & 2)?',a:"1. Management's description of the system\n2. Management's assertion (written)\n3. Independent service auditor's report\n4. Tests of controls and results\n\nManagement asserts:\na. Description fairly presents system\nb. Controls suitably designed\nc. Controls operated effectively (Type 2 only)"},
+{id:'u4m1-6',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'orange',bp:'III-A',q:'COSO ERM 5 components?',a:'1. Governance & Culture: Tone at the top\n2. Strategy & Objective-Setting: Risk appetite aligned with strategy\n3. Performance: Prioritize risks based on appetite\n4. Review & Revision: Review and make revisions\n5. Information, Communication & Reporting: Continual info sharing\n\nRisk Appetite: Amount of risk org is willing to accept.'},
+{id:'u4m1-7',u:'u4',m:'u4m1',mod:'M1: SOC Types',pri:'red',bp:'III-A',q:'Trust Services Criteria: How do they align with COSO?',a:'TSC builds on COSO Internal Control — Integrated Framework:\n\n• Common Criteria (CC): Apply to ALL engagements — mapped to COSO\'s 5 components. Security ONLY uses Common Criteria.\n\n• Supplemental Criteria: Additional criteria for Availability, Processing Integrity, Confidentiality, Privacy (chosen based on service commitments)\n\n• Additional Specific Criteria: Further criteria within each TSC category\n\nService Commitments: Promises to user entities\nSystem Requirements: How the system must function to meet commitments'},
+
+// U4-M2: SOC Reporting Part 1
+{id:'u4m2-1',u:'u4',m:'u4m2',mod:'M2: SOC Reporting',pri:'red',bp:'III-B',q:'Modified opinions on SOC reports?',a:'Qualified: "EXCEPT FOR the matter referred to…"\n• Separate paragraph before opinion explains reason\n\nAdverse: "BECAUSE OF the matter referred to…"\n• Same structure as qualified\n\nDisclaimer:\n• "We were ENGAGED to examine" (not "we examined")\n• Omits statement that evidence is sufficient\n• Omits description of examination engagement nature'},
+{id:'u4m2-2',u:'u4',m:'u4m2',mod:'M2: SOC Reporting',pri:'orange',bp:'III-B',q:'Unmodified vs Qualified vs Adverse vs Disclaimer?',a:'Unmodified: In ALL material respects, description fairly presents, controls suitably designed, operated effectively (Type 2).\n\nQualified: EXCEPT FOR — material but NOT pervasive\nAdverse: BECAUSE OF — material AND pervasive\nDisclaimer: Does NOT express an opinion (insufficient evidence)\n\nFor SOC 2: Auditor\'s responsibilities section is also amended.'},
+{id:'u4m2-3',u:'u4',m:'u4m2',mod:'M2: SOC Reporting',pri:'orange',bp:'III-B',q:'Carve-out vs Inclusive reporting on CSOCs?',a:'Carve-out: SOC report lists CSOCs the subservice org is expected to operate. Does NOT test them.\n\nInclusive: SOC report includes and TESTS the subservice org\'s controls as part of the examination.\n\nOpinion types: Unqualified, modified, or adverse can apply to the SOC report\'s presentation of CSOCs.\n\nTesting exceptions: If a control fails in a specific instance, it\'s reported as an exception/deviation in the SOC 2 report.'},
+
+// U4-M3: SOC Reporting Part 2
+{id:'u4m3-1',u:'u4',m:'u4m3',mod:'M3: Subservice & CUECs',pri:'red',bp:'III-A',q:'Inclusive Method vs Carve-Out Method?',a:'Inclusive: INCLUDES subservice org\'s controls in description. Best when services are extensive or sub\'s report isn\'t available.\n\nCarve-Out: EXCLUDES subservice org\'s controls. Describes nature but excludes controls. Best when inclusive is burdensome, auditor isn\'t independent of sub, or sub\'s report is available.\n\nSOC report MUST identify which method was used.'},
+{id:'u4m3-2',u:'u4',m:'u4m3',mod:'M3: Subservice & CUECs',pri:'red',bp:'III-A',q:'CUECs vs CSOCs?',a:'CUECs (Complementary User Entity Controls): Controls the USER ENTITY must implement alongside service org\'s controls. Required in system description. (SOC 1 & 2)\n\nCSOCs (Complementary Subservice Organization Controls): Controls the SUBSERVICE ORG must execute for service org\'s controls to work.\n\nImpact: Auditor\'s opinion MUST include statement of reliance on these controls.'},
+{id:'u4m3-3',u:'u4',m:'u4m3',mod:'M3: Subservice & CUECs',pri:'orange',bp:'III-A',q:'SOC engagement misstatement types?',a:'Description Misstatement: Errors or omissions in system description\nDeviation/Exception: Control fails in a specific instance\nDeficiency in Design: Necessary control missing or improperly designed\nDeficiency in Operating Effectiveness: Properly designed control fails to operate as intended'},
+
+// U4-M4: Planning & Risk
+{id:'u4m4-1',u:'u4',m:'u4m4',mod:'M4: Planning & Risk',pri:'orange',bp:'III-A',q:'SOC engagement terms and independence?',a:'Agreeing to Terms:\n1. Agree on objectives and scope\n2. Define auditor and management responsibilities\n3. Identify criteria to measure subject matter\n4. Acknowledge AICPA standards and limitations\n\nIndependence:\n• Must be independent of service organization\n• NOT required to be independent of each user entity\n• If inclusive method, must be independent of subservice org'},
+{id:'u4m4-2',u:'u4',m:'u4m4',mod:'M4: Planning & Risk',pri:'orange',bp:'III-A',q:'Materiality in SOC 1 vs SOC 2?',a:'SOC 1: Relates to fair presentation of system description, NOT user entities\' financial statements. Qualitative + quantitative factors (deviation rates).\n\nSOC 2: Relates to likelihood and magnitude of risks affecting service org\'s ability to meet commitments and system requirements.'},
+
+// U4-M5: Performing SOC
+{id:'u4m5-1',u:'u4',m:'u4m5',mod:'M5: Performing SOC',pri:'red',bp:'III-A',q:'6 key areas of SOC engagement performance?',a:'1. Respond to assessed risks\n2. Evaluate management\'s system description\n3. Obtain/evaluate evidence on control DESIGN\n4. Obtain/evaluate evidence on OPERATING EFFECTIVENESS (Type 2 only)\n5. Evaluate results of procedures\n6. Form the opinion'},
+{id:'u4m5-2',u:'u4',m:'u4m5',mod:'M5: Performing SOC',pri:'red',bp:'III-A',q:'Management Representation Letter requirements?',a:'• Confirms subject matter, assertions, criteria\n• Discloses subsequent events materially affecting report\n• Affirms all relevant access and info provided\n• Uncorrected misstatements believed immaterial\n• Discloses IC deficiencies, fraud, noncompliance\n• Confirms estimates are reasonable\n• Dated as of SOC report date\n• SOC report CANNOT be issued until received\n• If inclusive method, also from subservice org\n\nFailure to provide = scope limitation → may prevent unmodified opinion'},
+{id:'u4m5-3',u:'u4',m:'u4m5',mod:'M5: Performing SOC',pri:'orange',bp:'III-A',q:'Tests of controls: Nature, Extent, Timing?',a:'Nature: HOW controls are tested (inquiry, inspection, observation, reperformance)\nExtent: How MANY procedures and sample size\nTiming: WHEN controls are tested (interim, end of period, after)\n\nConsiderations: Control dependencies, evidence reliability, tolerable deviation rate, frequency of operation'},
+{id:'u4m5-4',u:'u4',m:'u4m5',mod:'M5: Performing SOC',pri:'orange',bp:'III-A',q:'Subsequent events in SOC engagements?',a:'Events AFTER engagement period but BEFORE auditor\'s report.\n\nLikely to affect: Programmer granted production access, confidentiality breach, forged signatures, defalcation (theft)\n\nUnlikely to affect: Acquisition by another company, natural disaster, post-period system changes\n\nIf management refuses to disclose: Auditor may modify report or withdraw.'},
+{id:'u4m5-5',u:'u4',m:'u4m5',mod:'M5: Performing SOC',pri:'orange',bp:'III-A',q:'What are subsequently discovered facts in SOC?',a:'Facts discovered AFTER the SOC report is ISSUED that existed during the engagement period.\n\nIf discovered:\n1. Determine if facts would have affected the report\n2. Discuss with management\n3. Determine if report needs revision\n4. If material: revise or add supplemental info\n\nFor SOC 1 & SOC 2:\n• May result in revised report or separate communication\n• Management should notify known users\n• Different from "subsequent events" (between period end and report date)'},
+];
+
+// ============================================================
+// MODULE REGISTRY
+// ============================================================
+const UNITS={u1:'Unit 1',u2:'Unit 2',u3:'Unit 3',u4:'Unit 4'};
+const MODS={};
+ALL.forEach(c=>{if(!MODS[c.m])MODS[c.m]={label:c.mod,u:c.u,count:0};MODS[c.m].count++});
+Object.keys(UNITS).forEach(u=>{
+  const el=document.getElementById(u+'mods');
+  Object.keys(MODS).filter(k=>MODS[k].u===u).forEach(k=>{
+    const b=document.createElement('button');
+    b.className='mod-btn';
+    b.innerHTML='<span>'+MODS[k].label+'</span><span class="mct">'+MODS[k].count+'</span>';
+    b.onclick=()=>setFilter(k);
+    b.dataset.mod=k;
+    el.appendChild(b);
+  });
+});
+
+// ============================================================
+// STATE
+// ============================================================
+let cards=[...ALL],ci=0,ratings={},priorities={};
+let currentFilter='all',priFilter={red:true,orange:true,white:true};
+let quizType='all',quizCount=15,qCards=[],qi=0;
+const LS_R='isc-v3-ratings',LS_P='isc-v3-pri';
+try{const s=localStorage.getItem(LS_R);if(s)ratings=JSON.parse(s)}catch(e){}
+try{const s=localStorage.getItem(LS_P);if(s)priorities=JSON.parse(s)}catch(e){}
+function save(){try{localStorage.setItem(LS_R,JSON.stringify(ratings))}catch(e){}try{localStorage.setItem(LS_P,JSON.stringify(priorities))}catch(e){}}
+function getPri(id){return priorities[id]||ALL.find(c=>c.id===id)?.pri||'orange'}
+
+// ============================================================
+// FILTERING
+// ============================================================
+function applyFilter(){
+  let pool=[...ALL];
+  if(currentFilter!=='all'){
+    if(currentFilter.length===2&&currentFilter.startsWith('u'))pool=pool.filter(c=>c.u===currentFilter);
+    else if(currentFilter.startsWith('bp:'))pool=pool.filter(c=>c.bp===currentFilter.slice(3));
+    else pool=pool.filter(c=>c.m===currentFilter);
+  }
+  pool=pool.filter(c=>priFilter[getPri(c.id)]);
+  cards=pool;ci=0;render();updateCounts();
+}
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.mod-btn').forEach(b=>b.classList.remove('active'));
+  if(f!=='all'&&f.length>2&&!f.startsWith('bp:')){const btn=document.querySelector('[data-mod="'+f+'"]');if(btn)btn.classList.add('active')}
+  applyFilter();
+  if(window.innerWidth<=768)document.querySelector('.side').classList.remove('open');
+}
+function togglePri(p,btn){priFilter[p]=!priFilter[p];btn.classList.toggle('sel');applyFilter()}
+function updateCounts(){
+  const total=ALL.length;
+  document.getElementById('totalCount').textContent=total+' cards loaded';
+  document.getElementById('allCt').textContent=ALL.filter(c=>priFilter[getPri(c.id)]).length;
+  Object.keys(UNITS).forEach(u=>{document.getElementById(u+'ct').textContent=ALL.filter(c=>c.u===u&&priFilter[getPri(c.id)]).length});
+  let g=0,f=0,m=0;
+  Object.values(ratings).forEach(r=>{if(r==='got')g++;else if(r==='fuzzy')f++;else m++});
+  document.getElementById('sg').textContent=g+' Got';
+  document.getElementById('sf').textContent=f+' Fuzzy';
+  document.getElementById('sm').textContent=m+' Missed';
+  const rated=g+f+m;
+  document.getElementById('pctDone').textContent=rated?Math.round((g/rated)*100)+'% mastered':'';
+}
+
+// ============================================================
+// FLASHCARD
+// ============================================================
+function render(){
+  if(!cards.length){document.getElementById('cn').textContent='0';document.getElementById('ct').textContent='0';document.getElementById('fq').textContent='No cards match filters.';document.getElementById('ftag').textContent='';document.getElementById('fbp').textContent='';document.getElementById('fa').textContent='';document.getElementById('btag').textContent='';document.getElementById('bbp').textContent='';return}
+  const c=cards[ci],pri=getPri(c.id);
+  const priColor=pri==='red'?'#e64040':pri==='orange'?'#e6a028':'#82827a';
+  const bpInfo=BP[c.bp];
+  const bpText=bpInfo?'\u{1F4CB} Blueprint: '+bpInfo.full:'';
+  document.getElementById('cn').textContent=ci+1;
+  document.getElementById('ct').textContent=cards.length;
+  document.getElementById('ftag').innerHTML='<span class="pri-ind" style="background:'+priColor+'"></span>'+c.mod;
+  document.getElementById('btag').innerHTML='<span class="pri-ind" style="background:'+priColor+'"></span>'+c.mod;
+  document.getElementById('fbp').textContent=bpText;
+  document.getElementById('bbp').textContent=bpText;
+  document.getElementById('fq').textContent=c.q;
+  document.getElementById('fa').textContent=c.a;
+  document.getElementById('fc').classList.remove('flipped');
+  document.querySelectorAll('.pribar .dot').forEach(d=>d.classList.remove('act'));
+  const dc=pri==='red'?'r':pri==='orange'?'o':'w';
+  const ad=document.querySelector('.pribar .dot.'+dc);if(ad)ad.classList.add('act');
+}
+function flip(){document.getElementById('fc').classList.toggle('flipped')}
+function next(){if(!cards.length)return;ci=(ci+1)%cards.length;render()}
+function prev(){if(!cards.length)return;ci=(ci-1+cards.length)%cards.length;render()}
+function shuffle(){for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]]}ci=0;render()}
+function rate(r){if(!cards.length)return;ratings[cards[ci].id]=r;save();updateCounts();next()}
+function setPri(p){if(!cards.length)return;priorities[cards[ci].id]=p;save();render();updateCounts()}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function sqt(btn,t){btn.parentElement.querySelectorAll('.qo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');quizType=t}
+function sqc(btn,c){btn.parentElement.querySelectorAll('.qo').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');quizCount=c}
+function startQuiz(){
+  let pool=[...ALL];
+  if(quizType==='weak')pool=ALL.filter(c=>ratings[c.id]==='fuzzy'||ratings[c.id]==='missed');
+  else if(quizType==='red')pool=ALL.filter(c=>getPri(c.id)==='red');
+  else if(quizType!=='all')pool=ALL.filter(c=>c.u===quizType);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  qCards=quizCount>0?pool.slice(0,Math.min(quizCount,pool.length)):pool;
+  if(!qCards.length){alert('No cards match.');return}
+  qi=0;document.getElementById('qsetup').style.display='none';document.getElementById('qactive').classList.add('show');renderQuiz();
+}
+function renderQuiz(){
+  const c=qCards[qi];
+  const bpInfo=BP[c.bp];
+  document.getElementById('qsec').textContent=c.mod+(bpInfo?' • '+bpInfo.name:'');
+  document.getElementById('qqt').textContent=c.q;
+  document.getElementById('qin').value='';document.getElementById('qrev').classList.remove('show');document.getElementById('qrb').style.display='';
+  document.getElementById('qbar').style.width=((qi/qCards.length)*100)+'%';document.getElementById('qin').focus();
+}
+function revealQuiz(){document.getElementById('qans').textContent=qCards[qi].a;document.getElementById('qrev').classList.add('show');document.getElementById('qrb').style.display='none'}
+function qRate(r){
+  ratings[qCards[qi].id]=r;save();updateCounts();qi++;
+  if(qi>=qCards.length){document.getElementById('qactive').classList.remove('show');document.getElementById('qsetup').style.display='';
+  const got=qCards.filter(c=>ratings[c.id]==='got').length;alert('Done! '+got+'/'+qCards.length+' correct.');return}renderQuiz();
+}
+
+// ============================================================
+// WEAK SPOTS
+// ============================================================
+function renderWeak(){
+  const weak=ALL.filter(c=>ratings[c.id]==='fuzzy'||ratings[c.id]==='missed');const el=document.getElementById('wlist');
+  if(!weak.length){el.innerHTML='<div class="empty">No weak spots yet.</div>';document.getElementById('dwb').style.display='none';document.getElementById('cwb').style.display='none';return}
+  document.getElementById('dwb').style.display='';document.getElementById('cwb').style.display='';
+  const missed=weak.filter(c=>ratings[c.id]==='missed'),fuzzy=weak.filter(c=>ratings[c.id]==='fuzzy');
+  let h='';[...missed,...fuzzy].forEach(c=>{const t=ratings[c.id]==='missed'?'tm':'tf',l=ratings[c.id]==='missed'?'Missed':'Fuzzy';
+  h+='<div class="wc" onclick="jumpTo(\''+c.id+'\')"><div class="wcq">'+c.q+'</div><span class="wct '+t+'">'+l+'</span></div>'});el.innerHTML=h;
+}
+function jumpTo(id){currentFilter='all';cards=[...ALL];ci=cards.findIndex(c=>c.id===id);if(ci<0)ci=0;switchView('fc');render()}
+function drillWeak(){cards=ALL.filter(c=>ratings[c.id]==='fuzzy'||ratings[c.id]==='missed');if(!cards.length)return;ci=0;switchView('fc');render()}
+function clearRatings(){if(!confirm('Clear all ratings?'))return;ratings={};save();updateCounts();renderWeak()}
+function resetRatings(){if(!confirm('Reset ALL ratings and priorities?'))return;ratings={};priorities={};save();updateCounts();applyFilter()}
+function exportProgress(){
+  const got=ALL.filter(c=>ratings[c.id]==='got'),fuzzy=ALL.filter(c=>ratings[c.id]==='fuzzy'),missed=ALL.filter(c=>ratings[c.id]==='missed'),unrated=ALL.filter(c=>!ratings[c.id]);
+  let t='ISC Progress — '+new Date().toLocaleDateString()+'\n'+'='.repeat(50)+'\nGot: '+got.length+' | Fuzzy: '+fuzzy.length+' | Missed: '+missed.length+' | Unrated: '+unrated.length+'\n\n';
+  if(missed.length){t+='MISSED:\n';missed.forEach(c=>t+='  • ['+c.mod+'] '+c.q+'\n');t+='\n'}
+  if(fuzzy.length){t+='FUZZY:\n';fuzzy.forEach(c=>t+='  • ['+c.mod+'] '+c.q+'\n')}
+  const b=new Blob([t],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='isc_progress.txt';a.click();
+}
+
+// ============================================================
+// BLUEPRINT COVERAGE
+// ============================================================
+function renderBlueprint(){
+  const el=document.getElementById('bpContent');
+  const sum=document.getElementById('bpSummary');
+  const totalCards=ALL.length;
+  const bpKeys=Object.keys(BP);
+  const covered=bpKeys.filter(k=>ALL.some(c=>c.bp===k)).length;
+  const totalTopics=bpKeys.length;
+
+  sum.innerHTML='<div class="bp-sum-card"><div class="bp-sum-num">'+totalCards+'</div><div class="bp-sum-label">Total Cards</div></div>'+
+    '<div class="bp-sum-card"><div class="bp-sum-num">'+covered+'/'+totalTopics+'</div><div class="bp-sum-label">Topics Covered</div></div>'+
+    '<div class="bp-sum-card"><div class="bp-sum-num" style="color:'+(covered===totalTopics?'#199e70':'#c98500')+'">'+Math.round(covered/totalTopics*100)+'%</div><div class="bp-sum-label">Coverage</div></div>';
+
+  let html='';
+  AREAS.forEach(area=>{
+    html+='<div class="bp-section">';
+    html+='<div class="bp-area-hd">'+area.name+' <span class="bpw">'+area.weight+'</span></div>';
+    const areaCards=ALL.filter(c=>area.groups.includes(c.bp));
+    const areaGot=areaCards.filter(c=>ratings[c.id]==='got').length;
+    const areaRated=areaCards.filter(c=>ratings[c.id]).length;
+    html+='<div class="bp-area-sub">'+areaCards.length+' cards | '+areaGot+' mastered'+(areaRated?' | '+Math.round(areaGot/Math.max(areaRated,1)*100)+'% accuracy':'')+'</div>';
+
+    area.groups.forEach(gk=>{
+      const info=BP[gk];
+      const gc=ALL.filter(c=>c.bp===gk);
+      const count=gc.length;
+      const got=gc.filter(c=>ratings[c.id]==='got').length;
+      const color=count>=5?'#199e70':count>=2?'#c98500':'#e64040';
+      const pct=count>0?Math.round(got/count*100):0;
+      html+='<div class="bp-row" onclick="studyBp(\''+gk+'\')">';
+      html+='<div class="bp-row-left"><span class="bp-code">'+gk+'</span><span class="bp-name">'+info.name+'</span></div>';
+      html+='<div class="bp-bar"><div class="bp-fill" style="width:'+pct+'%;background:'+color+'"></div></div>';
+      html+='<span class="bp-count" style="color:'+color+'">'+count+' cards</span>';
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+function studyBp(bpKey){
+  setFilter('bp:'+bpKey);
+  switchView('fc');
+}
+
+// ============================================================
+// VIEW SWITCHING & KEYBOARD
+// ============================================================
+function switchView(v,btn){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else document.querySelectorAll('.nav-tab').forEach(t=>{
+    if((v==='fc'&&t.textContent==='Flashcards')||(v==='quiz'&&t.textContent==='Quiz')||(v==='weak'&&t.textContent==='Weak Spots')||(v==='bp'&&t.textContent==='Blueprint'))t.classList.add('active')
+  });
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('v-'+v).classList.add('active');
+  document.getElementById('kbh').style.display=v==='fc'?'flex':'none';
+  if(v==='weak')renderWeak();
+  if(v==='bp')renderBlueprint();
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+  if(!document.getElementById('v-fc').classList.contains('active'))return;
+  if(e.code==='Space'){e.preventDefault();flip()}
+  else if(e.code==='ArrowRight')next();else if(e.code==='ArrowLeft')prev();
+  else if(e.key==='1')rate('got');else if(e.key==='2')rate('fuzzy');else if(e.key==='3')rate('missed');
+  else if(e.key==='s'||e.key==='S')shuffle();
+});
+
+updateCounts();render();
+</script>
+</body>
+</html>
